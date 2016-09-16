@@ -1,0 +1,8 @@
+# Ignore DS_Store
+*.DS_Store
+
+# NPM Modules
+*/Node_Modules
+
+# Tern Proj
+*.tern_project
