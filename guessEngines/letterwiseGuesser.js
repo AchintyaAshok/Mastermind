@@ -1,6 +1,6 @@
 var common = require("../lib/common");
 
-function letterWiseGuesser(socket, hintStr, corpus){
+function letterwiseGuesser(socket, hintStr, corpus){
   console.log("Initializing letter-wise-guesser");
 }
 
@@ -14,7 +14,7 @@ function nextGuess(){
 }
 
 module.exports = {
-  initGuessEngine:      letterwiseGuesser
+  initGuessEngine:      letterwiseGuesser,
   nextGuess:            nextGuess,
-  handleGuessResponse:  handleResponse,
+  handleGuessResponse:  handleGuessResponse,
 };

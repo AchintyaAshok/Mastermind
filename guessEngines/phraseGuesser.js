@@ -65,11 +65,13 @@ function calculateSimilarityScore(first, second){
 function phraseGuesser(socket, hintStr, corpus){
   console.log("Initializing phrase-guesser");
   generateCorpusIndex(corpus); // generate the corpus index off the bat
+  // console.log("\nGenerated Index:\n", indexForWords);
 }
 
 function handleGuessResponse(response){
   console.log("phrase-guesser::handleResponse()");
   var details = common.parseMessage(response);
+  console.log("message details -> ", details);
 }
 
 function nextGuess(){
@@ -77,7 +79,7 @@ function nextGuess(){
 }
 
 module.exports = {
-  initGuessEngine:      phraseGuesser
+  initGuessEngine:      phraseGuesser,
   nextGuess:            nextGuess,
-  handleGuessResponse:  handleGuessResponse,
+  handleGuessResponse:  handleGuessResponse
 };
