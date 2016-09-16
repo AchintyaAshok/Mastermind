@@ -4,5 +4,8 @@
 # NPM Modules
 */Node_Modules
 
+# NPM Debug
+*npm-debug.log
+
 # Tern Proj
 *.tern_project
