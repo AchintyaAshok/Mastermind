@@ -2,7 +2,7 @@
 *.DS_Store
 
 # NPM Modules
-*/Node_Modules
+*node_modules
 
 # NPM Debug
 *npm-debug.log

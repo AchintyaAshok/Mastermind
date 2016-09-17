@@ -22,5 +22,8 @@
   "bugs": {
     "url": "https://github.com/AchintyaAshok/Mastermind/issues"
   },
-  "homepage": "https://github.com/AchintyaAshok/Mastermind#readme"
+  "homepage": "https://github.com/AchintyaAshok/Mastermind#readme",
+  "dependencies": {
+    "events": "^1.1.1"
+  }
 }

@@ -18,6 +18,15 @@ var guessEngines = [
   "letterwiseGuesser"
 ];
 
-phraseGuesser.initGuessEngine({}, "_____ _____", corpus);
+var mockServer =
+
+var mockClient = {
+  send: function(guess){
+    mockServer.checkGuess()
+  }
+}
+
+
+phraseGuesser.initGuessEngine(mockClient, "_____ _____", corpus);
 phraseGuesser.handleGuessResponse("_____ _____\n1\n0");
 phraseGuesser.nextGuess();

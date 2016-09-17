@@ -3,6 +3,7 @@ var common = require("../lib/common");
 // Members for this guess engine
 var indexForWords = {};
 var lengthBuckets = [];
+var corpus;
 
 /* This function takes the corpus and generates two things.
 1. Generates lists of words that are grouped by their length.
@@ -65,13 +66,14 @@ function calculateSimilarityScore(first, second){
 function phraseGuesser(socket, hintStr, corpus){
   console.log("Initializing phrase-guesser");
   generateCorpusIndex(corpus); // generate the corpus index off the bat
-  // console.log("\nGenerated Index:\n", indexForWords);
 }
 
 function handleGuessResponse(response){
   console.log("phrase-guesser::handleResponse()");
   var details = common.parseMessage(response);
   console.log("message details -> ", details);
+  // console.log("corpus? ", corpus.length);
+  console.log("index:", indexForWords);
 }
 
 function nextGuess(){
