@@ -1,6 +1,9 @@
 console.log("Starting mastermind game.");
 
-var path = require("path");
+var path          = require("path");
+var EventEmitter  = require('events').EventEmitter; // so we can trigger some async events
+var mockServer    = require('./mockServer');
+var mockClient    = require('./mockClient');
 
 const ENGINES_PATH = path.join(__dirname, "guessEngines");
 
@@ -18,15 +21,20 @@ var guessEngines = [
   "letterwiseGuesser"
 ];
 
-var mockServer =
+var eventPublisher = new EventEmitter();
 
-var mockClient = {
-  send: function(guess){
-    mockServer.checkGuess()
-  }
-}
+/* Initialize our server and client */
+eventPublisher.on('initServer', function(){
+  console.log('Server init()');
+  mockClient.init(eventPublisher);
+});
+eventPublisher.on('initClient', function(){
+  console.log('Client init()');
+});
 
-
-phraseGuesser.initGuessEngine(mockClient, "_____ _____", corpus);
-phraseGuesser.handleGuessResponse("_____ _____\n1\n0");
-phraseGuesser.nextGuess();
+mockServer.init(eventPublisher);
+//
+//
+// phraseGuesser.initGuessEngine(mockClient, "_____ _____", corpus);
+// phraseGuesser.handleGuessResponse("_____ _____\n1\n0");
+// phraseGuesser.nextGuess();
