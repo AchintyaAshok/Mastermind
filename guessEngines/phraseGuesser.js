@@ -63,7 +63,7 @@ function calculateSimilarityScore(first, second){
   return score;
 }
 
-function phraseGuesser(socket, hintStr, corpus){
+function phraseGuesser(wsClient, corpus){
   console.log("Initializing phrase-guesser");
   generateCorpusIndex(corpus); // generate the corpus index off the bat
 }

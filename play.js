@@ -30,11 +30,11 @@ eventPublisher.on('initServer', function(){
 });
 eventPublisher.on('initClient', function(){
   console.log('Client init()');
+  phraseGuesser.initGuessEngine(mockClient, corpus);
+});
+eventPublisher.on('serverMessage', function(message){
+  phraseGuesser.handleGuessResponse(message);
 });
 
-mockServer.init(eventPublisher);
-//
-//
-// phraseGuesser.initGuessEngine(mockClient, "_____ _____", corpus);
-// phraseGuesser.handleGuessResponse("_____ _____\n1\n0");
-// phraseGuesser.nextGuess();
+// Initialize the server
+mockServer.init(eventPublisher, corpus); // initialize the server
