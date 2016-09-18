@@ -5,7 +5,7 @@ var common = require("lib/common");
 // Event pub is the global eventEmitter passed in, secretPhrase is the phrase
 // that the client needs to guess to win, and obscured phrase is just the
 // secret phrase with letters masked out with an underscore.
-var eventPublisher, corpus, secretPhrase, obscuredPhrase;
+var eventPublisher, corpus, secretPhrase, maskedPhrase;
 // State variables
 const WON     = 1;
 const IN_PLAY = 0;
@@ -26,7 +26,7 @@ function init(eventPublisher, corpus){
   corpus = corpus;
   var secret = common.generateSecretPhrase(corpus, 10);
   secretPhrase = secret.secretPhrase;
-  obscuredPhrase = secret.obscuredPhrase;
+  maskedPhrase = secret.maskedPhrase;
 
   // Set the event handler for client guesses
   eventPublisher.on('clientSendMessage', function(message){
