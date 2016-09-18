@@ -21,12 +21,13 @@ function evaluateGuess(guess){
 }
 
 /* Constructor for the mock server */
-function init(eventPub, corpus){
+function init(eventPub, corpus, phraseLength){
   eventPublisher = eventPub;
   corpus = corpus;
-  var secret = common.generateSecretPhrase(corpus, 10);
-  secretPhrase = secret.secretPhrase;
-  maskedPhrase = secret.maskedPhrase;
+  var secret = common.generateSecretPhrase(corpus, phraseLength);
+  console.log("SECRET: ", secret);
+  secretPhrase = "hello world";//secret.secretPhrase;
+  maskedPhrase = "_____ _____";//secret.maskedPhrase;
 
   // Set the event handler for client guesses
   eventPublisher.on('clientSendMessage', function(message){
