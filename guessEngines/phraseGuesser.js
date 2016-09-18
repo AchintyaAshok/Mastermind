@@ -66,17 +66,24 @@ function calculateSimilarityScore(first, second){
   return score;
 }
 
+/* The constructor for the Phrase Guesser Guess Engine. */
 function phraseGuesser(wsClient, corpus){
   console.log("Initializing phrase-guesser [PG]");
   client = wsClient;
   generateCorpusIndex(corpus); // generate the corpus index off the bat
 }
 
+/* This generates the next guess using the engine logic and then messages
+the server with the guess using the Web Socket Client passed in upon instantiation
+of the Guess Engine */
 function nextGuess(){
   console.log("phrase-guesser::nextGuess()");
   client.send("hello world");
 }
 
+/* The generic handler that is exposed to the caller that will handle messages
+for guesses from the server. This will determine the state of the guess then
+trigger the next most appropriate guess. */
 function handleMessage(response){
   console.log("phrase-guesser::handleResponse()");
   var details = common.parseMessage(response);
