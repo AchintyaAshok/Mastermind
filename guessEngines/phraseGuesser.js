@@ -2,20 +2,12 @@ var common = require("../lib/common");
 
 // Since we aren't using es6..
 var pgMembers = {
-  indexForWords:  {},
-  lengthBuckets:  [],
+  indexForWords:  {}, // a mapping from each word to all other words of the same length. The mapping indicates the number of letters in common it has with the key.
+  lengthBuckets:  [], // a bucket of words where each bucket represents the length of all the words in itself. Ex. [4] -> all five-letter-words (zero-indexed)
   corpus:         [],
-  client:         undefined,
-  initStateData:  false
+  client:         undefined, // this is our websocket client handle
+  initStateData:  false // indicates whether we've processed the initial message from the server yet
 };
-
-// // Members for this guess engine
-// var indexForWords = {};
-// var lengthBuckets = [];
-// var corpus;
-// // The WS Client that we send messages through
-// var client;
-// var initStateData = false; // this checks if we've initialized the state of all our data
 
 /* This function takes the corpus and generates two things.
 1. Generates lists of words that are grouped by their length.
