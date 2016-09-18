@@ -34,7 +34,8 @@ function init(eventPublisher, corpus){
   });
   // Indicate that the server is ready
   eventPublisher.emit('initServer');
-  eventPublisher.emit('serverMessage', )
+  var initialMessage = maskedPhrase + "\n0\n0";
+  eventPublisher.emit('serverMessage', initialMessage);
 }
 
 module.exports = {

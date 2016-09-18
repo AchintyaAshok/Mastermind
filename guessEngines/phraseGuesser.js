@@ -67,7 +67,7 @@ function calculateSimilarityScore(first, second){
 }
 
 function phraseGuesser(wsClient, corpus){
-  console.log("Initializing phrase-guesser");
+  console.log("Initializing phrase-guesser [PG]");
   wsClient = wsClient;
   generateCorpusIndex(corpus); // generate the corpus index off the bat
 }
@@ -80,8 +80,9 @@ function nextGuess(){
 function handleMessage(response){
   console.log("phrase-guesser::handleResponse()");
   var details = common.parseMessage(response);
-  console.log("message details -> ", details);
+  console.log("[PG] message details:", details);
   if(!initStateDate){
+    console.log("[PG] initializing state data");
     // this is the first server message we're getting!
     initStateData = true;
   }
