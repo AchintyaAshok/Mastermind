@@ -4,6 +4,7 @@ var common = require("../lib/common");
 var indexForWords = {};
 var lengthBuckets = [];
 var corpus;
+var prunedCorpus;
 // The WS Client that we send messages through
 var client;
 var initStateDate = false; // this checks if we've initialized the state of all our data
@@ -67,9 +68,10 @@ function calculateSimilarityScore(first, second){
 }
 
 /* The constructor for the Phrase Guesser Guess Engine. */
-function phraseGuesser(wsClient, corpus){
+function phraseGuesser(wsClient, givenCorpus){
   console.log("Initializing phrase-guesser [PG]");
   client = wsClient;
+  corpus = givenCorpus;
   generateCorpusIndex(corpus); // generate the corpus index off the bat
 }
 
@@ -90,7 +92,7 @@ function handleMessage(response){
   console.log("[PG] message details:", details);
   if(!initStateDate){
     console.log("[PG] initializing state data");
-    // this is the first server message we're getting!
+    // initialize any useful stuff
     initStateData = true;
   }
   nextGuess();

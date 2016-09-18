@@ -19,7 +19,6 @@ var corpus = [ "jello", "am", "golden", "world", "black",
 
 console.log("Secret: ", common.generateSecretPhrase(corpus, 10));
 
-
 var guessEngines = [
   "phraseGuesser",
   "letterwiseGuesser"
