@@ -34,6 +34,7 @@ function init(eventPublisher, corpus){
   });
   // Indicate that the server is ready
   eventPublisher.emit('initServer');
+  eventPublisher.emit('serverMessage', )
 }
 
 module.exports = {

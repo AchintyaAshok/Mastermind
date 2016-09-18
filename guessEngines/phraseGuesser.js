@@ -4,6 +4,9 @@ var common = require("../lib/common");
 var indexForWords = {};
 var lengthBuckets = [];
 var corpus;
+// The WS Client that we send messages through
+var wsClient;
+var initStateDate = false; // this checks if we've initialized the state of all our data
 
 /* This function takes the corpus and generates two things.
 1. Generates lists of words that are grouped by their length.
@@ -65,23 +68,27 @@ function calculateSimilarityScore(first, second){
 
 function phraseGuesser(wsClient, corpus){
   console.log("Initializing phrase-guesser");
+  wsClient = wsClient;
   generateCorpusIndex(corpus); // generate the corpus index off the bat
-}
-
-function handleGuessResponse(response){
-  console.log("phrase-guesser::handleResponse()");
-  var details = common.parseMessage(response);
-  console.log("message details -> ", details);
-  // console.log("corpus? ", corpus.length);
-  console.log("index:", indexForWords);
 }
 
 function nextGuess(){
   console.log("phrase-guesser::nextGuess()");
+  wsClient.send("hello world");
+}
+
+function handleMessage(response){
+  console.log("phrase-guesser::handleResponse()");
+  var details = common.parseMessage(response);
+  console.log("message details -> ", details);
+  if(!initStateDate){
+    // this is the first server message we're getting!
+    initStateData = true;
+  }
+  nextGuess();
 }
 
 module.exports = {
-  initGuessEngine:      phraseGuesser,
-  nextGuess:            nextGuess,
-  handleGuessResponse:  handleGuessResponse
+  initGuessEngine:  phraseGuesser,
+  handleMessage:    handleMessage
 };

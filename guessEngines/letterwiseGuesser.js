@@ -1,11 +1,11 @@
 var common = require("../lib/common");
 
-function letterwiseGuesser(socket, hintStr, corpus){
+function letterwiseGuesser(socket, corpus){
   console.log("Initializing letter-wise-guesser");
 }
 
-function handleGuessResponse(response){
-  console.log("letterWiseGuesser::handleResponse()");
+function handleMessage(response){
+  console.log("letterWiseGuesser::handleMessage()");
   var details = common.parseMessage(response);
 }
 
@@ -14,7 +14,6 @@ function nextGuess(){
 }
 
 module.exports = {
-  initGuessEngine:      letterwiseGuesser,
-  nextGuess:            nextGuess,
-  handleGuessResponse:  handleGuessResponse,
+  initGuessEngine:  letterwiseGuesser,
+  handleMessage:    handleMessage,
 };

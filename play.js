@@ -33,7 +33,7 @@ eventPublisher.on('initClient', function(){
   phraseGuesser.initGuessEngine(mockClient, corpus);
 });
 eventPublisher.on('serverMessage', function(message){
-  phraseGuesser.handleGuessResponse(message);
+  phraseGuesser.handleMessage(message);
 });
 
 // Initialize the server
