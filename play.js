@@ -35,6 +35,9 @@ eventPublisher.on('initClient', function(){
 eventPublisher.on('serverMessage', function(message){
   phraseGuesser.handleMessage(message);
 });
+eventPublisher.on('serverClose', function(){
+  console.log("SERVER CLOSED");
+});
 
 // Initialize the server
 mockServer.init(eventPublisher, corpus); // initialize the server

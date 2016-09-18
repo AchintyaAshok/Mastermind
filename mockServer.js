@@ -1,6 +1,6 @@
 // This is an implementation of a mock server that randomly generates a
 // phrase that the guess engine needs to guess.
-var common = require("lib/common");
+var common = require("./lib/common");
 
 // Event pub is the global eventEmitter passed in, secretPhrase is the phrase
 // that the client needs to guess to win, and obscured phrase is just the
@@ -21,8 +21,8 @@ function evaluateGuess(guess){
 }
 
 /* Constructor for the mock server */
-function init(eventPublisher, corpus){
-  eventPublisher = eventPublisher;
+function init(eventPub, corpus){
+  eventPublisher = eventPub;
   corpus = corpus;
   var secret = common.generateSecretPhrase(corpus, 10);
   secretPhrase = secret.secretPhrase;

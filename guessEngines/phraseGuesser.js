@@ -5,7 +5,7 @@ var indexForWords = {};
 var lengthBuckets = [];
 var corpus;
 // The WS Client that we send messages through
-var wsClient;
+var client;
 var initStateDate = false; // this checks if we've initialized the state of all our data
 
 /* This function takes the corpus and generates two things.
@@ -68,13 +68,13 @@ function calculateSimilarityScore(first, second){
 
 function phraseGuesser(wsClient, corpus){
   console.log("Initializing phrase-guesser [PG]");
-  wsClient = wsClient;
+  client = wsClient;
   generateCorpusIndex(corpus); // generate the corpus index off the bat
 }
 
 function nextGuess(){
   console.log("phrase-guesser::nextGuess()");
-  wsClient.send("hello world");
+  client.send("hello world");
 }
 
 function handleMessage(response){
