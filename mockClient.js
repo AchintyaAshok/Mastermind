@@ -12,7 +12,7 @@ function init(eventEmitter){
 /* invokes the appropriate code in the mock server to interpret the guess
 and sends a 'response' back via the handler method. */
 function send(message){
-  console.log("[Client]\tSending message");
+  console.log("[Client] Sending message");
   eventsHandler.emit('clientSendMessage', message);
 }
 
