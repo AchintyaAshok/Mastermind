@@ -14,7 +14,7 @@ var pgMembers = {
   guessPieces:        [], // each piece of the phrase we have guessed successfully. ["hello", "node"]
   guessPieceLength:   [], // the length of each piece. "_____ ____": [5, 4]
   guessPieceIndex:    0,  // the index of the piece we are currently guessing
-  ignoredWords:       {},
+  queuedOrIgnored:    {},
   guessQueue:         new Queue(), // we will just push everything into here and evaluate it in FIFO fashion
   lastGuess:          "",
 };
@@ -90,13 +90,17 @@ the server with the guess using the Web Socket Client passed in upon instantiati
 of the Guess Engine */
 function nextGuess(){
   console.log("[PG]::nextGuess()");
-  var nextWord = guessQueue.deq();
-  while(ignoredWords[nextWord] !== undefined){
+  var nextWord = undefined;
+  while(pgMembers.queuedOrIgnored[nextWord] !== undefined){
     // keep dequeueing until we find the next word
     nextWord = guessQueue.deq();
   }
-  console.log("next word: ", nextWord);
+  if(nextWord === undefined){
+    throw("[PG]::nextGuess() - No more words left to check!");
+  }
+  pgMembers.queuedOrIgnored[nextWord] = true; // mark this word as visited
   pgMembers.lastGuess = nextWord; // our new 'last guess'
+  console.log("next word: ", nextWord);
 
   // now place the word in the position we are evaluating
   // ex. next word = "hello" => "hello _____"
@@ -116,10 +120,82 @@ function nextGuess(){
   pgMembers.client.send(guess);
 }
 
+/* Returns a random word that matches the length of the word that we are trying to
+guess */
+function getRandomFirstGuess(guessPieceIndex){
+  var firstWordLength = pgMembers.guessPieceLength[guessPieceIndex];
+  var validWords = pgMembers.lengthBuckets[firstWordLength - 1]; // 0 indexed
+  return validWords[Math.floor(Math.random(validWords.length))];
+}
+
 /* Evaluates the score of the last guess and then appropriately prunes our choices for
 this position. If the word is a perfect match, then we move on to the word in the next position. */
 function evaluateLastGuess(score){
   console.log("[PG]::evaluateLastGuess()");
+
+  // Check if we got a correct match
+  if(score === pgMembers.guessPieceLength[pgMembers.guessPieceIndex]){
+    console.log("Found a piece: [" + pgMembers.guessPieceIndex + "]: ", pgMembers.lastGuess);
+    // add this to our string array of correct pieces
+    pgMembers.guessPieces.push(pgMembers.lastGuess);
+    ++pgMembers.guessPieceIndex;
+
+    // Check if we have found all our pieces, if yes, send the entire guess via the client
+    if(pgMembers.guessPieceIndex >= pgMembers.guessPieceLength.length){
+      var pre = "";
+      var fullGuess = "";
+      for(var i=0; i<pgMembers.guessPieces.length; ++i){
+        fullGuess += pre;
+        fullGuess += pgMembers.guessPieces[i];
+        pre = " ";
+      }
+      console.log("Final guess: ", fullGuess);
+      pgMembers.client.send(fullGuess);
+    }
+    else{
+      // we need to do some cleanup to prepare for the next piece
+      pgMembers.queuedOrIgnored = {};
+      while(!pgMembers.guessQueue.isEmpty()) pgMembers.guessQueue.deq(); // clear out the guess queue
+      pgMembers.guessQueue.push(getRandomFirstGuess(pgMembers.guessPieceIndex));
+    }
+  }
+  else{
+    // anything that has a score less than this is not worth guessing
+    var relativeWordAndScore = pgMembers.indexForWords[pgMembers.lastGuess]; //word: 'xz' [0]: ['am', 'bp'], [1]: ['cz', 'dz'], [2]: ['xz']
+    if(score === 0){
+      // special case, we add all words that absolutely don't match this
+      for(var i=0; i<relativeWordAndScore[0].length; ++i){ // all words with 0 matching characters with the last guess
+        var word = relativeWordAndScore[0][i];
+        if(pgMembers.queuedOrIgnored[word] === undefined){
+          pgMembers.guessQueue.push(word);
+        }
+      }
+    }
+    else{
+      // we add anything over and above the matching score and remove anything below it
+      for(var i=0; i<score; ++i){
+        var wordsToIgnore = relativeWordAndScore[i];
+        for(var j=0; j<wordsToIgnore.length; ++j){
+          var word = wordsToIgnore[j];
+          if(pgMembers.queuedOrIgnored[word] === undefined){
+            pgMembers.guessQueue.push(word); // ignore this word
+          }
+        }
+      }
+      // add anything >= score
+      for(var i=score; i<relativeWordAndScore.length; ++i){
+        var wordsToEval = relativeWordAndScore[i];
+        for(var j=0; j<wordsToEval.length; ++j){
+          var word = wordsToEval[j];
+          if(pgMembers.queuedOrIgnored[word] === undefined){
+            pgMembers.guessQueue.push(word);
+          }
+        }
+      }
+    }
+  }
+
+
 }
 
 /* The generic handler that is exposed to the caller that will handle messages
@@ -130,6 +206,15 @@ function handleMessage(response){
   var details = common.parseMessage(response);
   console.log("[PG] message details:", details);
 
+  if(details.state === 1){ // 1 is the winning state
+    console.log("You won.");
+    return;
+  }
+  else if(details.state === -1){ // you lose :(
+    console.log("You lost.")
+    return;
+  }
+
   // Initialize any pertinent data for the first pass
   if(!pgMembers.initStateData){
     pgMembers.initStateData = true;
@@ -139,10 +224,7 @@ function handleMessage(response){
       pgMembers.guessPieceLength.push(pieces[i].length); // determine the length of each piece
     }
     // randomly pick a word that fits the length of the first piece
-    var firstWordLength = guessPieceLength[0];
-    var validWords = pgMembers.lengthBuckets[firstWordLength - 1]; // 0 indexed
-    var firstWord = validWords[Math.floor(Math.random(validWords.length))];
-    pgMembers.guessQueue.push(firstWord); // add this to our queue
+    pgMembers.guessQueue.push(getRandomFirstGuess(0)); // add this to our queue
   }
   else{
     // evaluate how good the last guess was and prune our choices appropriately

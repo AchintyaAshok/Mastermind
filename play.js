@@ -30,28 +30,30 @@ var guessEngines = [
   "letterwiseGuesser"
 ];
 
+phraseGuesser.initGuessEngine(undefined, ["hello", "world"]);
+
 // The singleton event publisher that's used to asynchronously communicate between mock client and mock server
-var eventPublisher = new EventEmitter();
-
-/* Initialize our server and client */
-eventPublisher.on('initServer', function(){
-  console.log('Server init()');
-  mockClient.init(eventPublisher);
-});
-eventPublisher.on('initClient', function(){
-  console.log('Client init()');
-  phraseGuesser.initGuessEngine(mockClient, corpus);
-});
-eventPublisher.on('serverMessage', function(message){
-  phraseGuesser.handleMessage(message);
-});
-eventPublisher.on('serverClose', function(){
-  console.log("SERVER CLOSED");
-});
-
-// Change this to whatever you please
-var myDifficulty = DIFFICULTY.easy;
-var phraseLength = Math.floor(Math.random() * (myDifficulty[1] - myDifficulty[0]) + myDifficulty[0]);
-
-// Initialize the server
-mockServer.init(eventPublisher, corpus, phraseLength); // initialize the server
+// var eventPublisher = new EventEmitter();
+//
+// /* Initialize our server and client */
+// eventPublisher.on('initServer', function(){
+//   console.log('Server init()');
+//   mockClient.init(eventPublisher);
+// });
+// eventPublisher.on('initClient', function(){
+//   console.log('Client init()');
+//   phraseGuesser.initGuessEngine(mockClient, corpus);
+// });
+// eventPublisher.on('serverMessage', function(message){
+//   phraseGuesser.handleMessage(message);
+// });
+// eventPublisher.on('serverClose', function(){
+//   console.log("SERVER CLOSED");
+// });
+//
+// // Change this to whatever you please
+// var myDifficulty = DIFFICULTY.easy;
+// var phraseLength = Math.floor(Math.random() * (myDifficulty[1] - myDifficulty[0]) + myDifficulty[0]);
+//
+// // Initialize the server
+// mockServer.init(eventPublisher, corpus, phraseLength); // initialize the server
