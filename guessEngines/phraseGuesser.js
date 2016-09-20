@@ -90,10 +90,13 @@ the server with the guess using the Web Socket Client passed in upon instantiati
 of the Guess Engine */
 function nextGuess(){
   console.log("[PG]::nextGuess()");
+  console.log("[PG] Guess Queue Size: ", pgMembers.guessQueue.size());
   var nextWord = undefined;
-  while(pgMembers.queuedOrIgnored[nextWord] !== undefined){
+  while(true){
     // keep dequeueing until we find the next word
-    nextWord = guessQueue.deq();
+    nextWord = pgMembers.guessQueue.deq();
+    console.log("next..", nextWord);
+    if(pgMembers.queuedOrIgnored[nextWord] === undefined) break;
   }
   if(nextWord === undefined){
     throw("[PG]::nextGuess() - No more words left to check!");
@@ -112,7 +115,7 @@ function nextGuess(){
       guess += nextWord;
     }
     else{
-      for(j=0; j<pgMembers.guessPieceLength[i]; ++i) guess += "_";
+      for(var j=0; j<pgMembers.guessPieceLength[i]; ++j) guess += "_";
     }
     pre = " ";
   }
@@ -217,6 +220,7 @@ function handleMessage(response){
 
   // Initialize any pertinent data for the first pass
   if(!pgMembers.initStateData){
+    console.log("[PG] Initializing state data...");
     pgMembers.initStateData = true;
     var pieces = details.hintStr.split(" "); // "_____ _____" => ["_____", "_____"]
     // keep track of the length of each piece
