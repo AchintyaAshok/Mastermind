@@ -1,4 +1,5 @@
-var common = require("../lib/common");
+var common  = require("../lib/common");
+var Queue   = require("queuejs");
 
 // Since we aren't using es6..
 var pgMembers = {
@@ -6,7 +7,16 @@ var pgMembers = {
   lengthBuckets:  [], // a bucket of words where each bucket represents the length of all the words in itself. Ex. [4] -> all five-letter-words (zero-indexed)
   corpus:         [],
   client:         undefined, // this is our websocket client handle
-  initStateData:  false // indicates whether we've processed the initial message from the server yet
+  initStateData:  false, // indicates whether we've processed the initial message from the server yet
+  numDelimiters:  0,  // the number of spaces in the hint given to us
+
+  // state variables between guesses
+  guessPieces:        [], // each piece of the phrase we have guessed successfully. ["hello", "node"]
+  guessPieceLength:   [], // the length of each piece. "_____ ____": [5, 4]
+  guessPieceIndex:    0,  // the index of the piece we are currently guessing
+  ignoredWords:       {},
+  guessQueue:         new Queue(), // we will just push everything into here and evaluate it in FIFO fashion
+  lastGuess:          "",
 };
 
 /* This function takes the corpus and generates two things.
@@ -69,7 +79,7 @@ function calculateSimilarityScore(first, second){
 
 /* The constructor for the Phrase Guesser Guess Engine. */
 function phraseGuesser(wsClient, givenCorpus){
-  console.log("Initializing phrase-guesser [PG]");
+  console.log("[PG]::init()");
   pgMembers.client = wsClient;
   pgMembers.corpus = givenCorpus;
   generateCorpusIndex(pgMembers.corpus); // generate the corpus index off the bat
@@ -79,22 +89,66 @@ function phraseGuesser(wsClient, givenCorpus){
 the server with the guess using the Web Socket Client passed in upon instantiation
 of the Guess Engine */
 function nextGuess(){
-  console.log("phrase-guesser::nextGuess()");
-  pgMembers.client.send("hello world");
+  console.log("[PG]::nextGuess()");
+  var nextWord = guessQueue.deq();
+  while(ignoredWords[nextWord] !== undefined){
+    // keep dequeueing until we find the next word
+    nextWord = guessQueue.deq();
+  }
+  console.log("next word: ", nextWord);
+  pgMembers.lastGuess = nextWord; // our new 'last guess'
+
+  // now place the word in the position we are evaluating
+  // ex. next word = "hello" => "hello _____"
+  var guess = "";
+  var pre = "";
+  for(var i=0; i<pgMembers.guessPieceLength.length; ++i){
+    guess += pre;
+    if(i == pgMembers.guessPieceIndex){
+      guess += nextWord;
+    }
+    else{
+      for(j=0; j<pgMembers.guessPieceLength[i]; ++i) guess += "_";
+    }
+    pre = " ";
+  }
+  console.log("next guess: ", guess);
+  pgMembers.client.send(guess);
+}
+
+/* Evaluates the score of the last guess and then appropriately prunes our choices for
+this position. If the word is a perfect match, then we move on to the word in the next position. */
+function evaluateLastGuess(score){
+  console.log("[PG]::evaluateLastGuess()");
 }
 
 /* The generic handler that is exposed to the caller that will handle messages
 for guesses from the server. This will determine the state of the guess then
 trigger the next most appropriate guess. */
 function handleMessage(response){
-  console.log("phrase-guesser::handleResponse()");
+  console.log("[PG]::handleResponse()");
   var details = common.parseMessage(response);
   console.log("[PG] message details:", details);
+
+  // Initialize any pertinent data for the first pass
   if(!pgMembers.initStateData){
-    console.log("[PG] initializing state data");
-    // initialize any useful stuff
     pgMembers.initStateData = true;
+    var pieces = details.hintStr.split(" "); // "_____ _____" => ["_____", "_____"]
+    // keep track of the length of each piece
+    for(var i=0; i<pieces.length; ++i){
+      pgMembers.guessPieceLength.push(pieces[i].length); // determine the length of each piece
+    }
+    // randomly pick a word that fits the length of the first piece
+    var firstWordLength = guessPieceLength[0];
+    var validWords = pgMembers.lengthBuckets[firstWordLength - 1]; // 0 indexed
+    var firstWord = validWords[Math.floor(Math.random(validWords.length))];
+    pgMembers.guessQueue.push(firstWord); // add this to our queue
   }
+  else{
+    // evaluate how good the last guess was and prune our choices appropriately
+    evaluateLastGuess(details.score); // the last score tells us how many letters were matched
+  }
+
   nextGuess();
 }
 

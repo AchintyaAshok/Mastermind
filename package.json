@@ -24,6 +24,7 @@
   },
   "homepage": "https://github.com/AchintyaAshok/Mastermind#readme",
   "dependencies": {
-    "events": "^1.1.1"
+    "events": "^1.1.1",
+    "queuejs": "^0.1.0"
   }
 }
