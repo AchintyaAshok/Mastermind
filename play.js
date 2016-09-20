@@ -19,13 +19,13 @@ const DIFFICULTY = {
 var phraseGuesser     = require(path.join(ENGINES_PATH, "phraseGuesser"));
 var letterwiseGuesser = require(path.join(ENGINES_PATH, "letterwiseGuesser"));
 
-// var corpus = [ "jello", "am", "golden", "world", "black",
-//  "green", "hat", "cat", "hello", "champ", "hound",
-//  "mistake", "fat", "a", "urn", "gnat", "park", "gun",
-//  "mourn", "chat", "mask", "fun", "cask", "print"
-// ];
+var corpus = [ "jello", "am", "golden", "world", "black",
+ "green", "hat", "cat", "hello", "champ", "hound",
+ "mistake", "fat", "a", "urn", "gnat", "park", "gun",
+ "mourn", "chat", "mask", "fun", "cask", "print"
+];
 
-var corpus = [ "hello", "world" ];
+// var corpus = [ "hello", "world" ];
 
 var guessEngines = [
   "phraseGuesser",

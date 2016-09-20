@@ -135,6 +135,7 @@ function getRandomFirstGuess(guessPieceIndex){
 this position. If the word is a perfect match, then we move on to the word in the next position. */
 function evaluateLastGuess(score){
   console.log("[PG]::evaluateLastGuess()");
+  console.log("[PG] Last guess score: ", score);
 
   // Check if we got a correct match
   if(score === pgMembers.guessPieceLength[pgMembers.guessPieceIndex]){
@@ -156,6 +157,7 @@ function evaluateLastGuess(score){
       pgMembers.client.send(fullGuess);
     }
     else{
+      console.log("resetting state variables for next piece");
       // we need to do some cleanup to prepare for the next piece
       pgMembers.queuedOrIgnored = {};
       while(!pgMembers.guessQueue.isEmpty()) pgMembers.guessQueue.deq(); // clear out the guess queue
@@ -223,6 +225,7 @@ function handleMessage(response){
     console.log("[PG] Initializing state data...");
     pgMembers.initStateData = true;
     var pieces = details.hintStr.split(" "); // "_____ _____" => ["_____", "_____"]
+    pgMembers.numDelimiters = pieces.length - 1;
     // keep track of the length of each piece
     for(var i=0; i<pieces.length; ++i){
       pgMembers.guessPieceLength.push(pieces[i].length); // determine the length of each piece
@@ -232,7 +235,7 @@ function handleMessage(response){
   }
   else{
     // evaluate how good the last guess was and prune our choices appropriately
-    evaluateLastGuess(details.score); // the last score tells us how many letters were matched
+    evaluateLastGuess(details.score - pgMembers.numDelimiters); // the last score tells us how many letters were matched
   }
 
   nextGuess();

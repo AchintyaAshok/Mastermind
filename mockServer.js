@@ -15,8 +15,18 @@ function evaluateGuess(guess){
   console.log("[S] Evaluating latest guess '" + guess + "'");
   if(guess === secretPhrase){
     console.log('[S] You won.');
+    eventPublisher.emit('serverMessage', maskedPhrase + "\n0\n1");
     eventPublisher.emit('serverClose'); // socket gets closed
     return;
+  }
+  else{
+    console.log("checking score..");
+    var score = 0;
+    for(var i=0; i<guess.length; ++i){
+      if(guess[i] === secretPhrase[i]) ++score
+    }
+    var message = maskedPhrase + "\n" + score + "\n0";
+    eventPublisher.emit('serverMessage', message);
   }
 }
 
@@ -26,8 +36,8 @@ function init(eventPub, corpus, phraseLength){
   corpus = corpus;
   var secret = common.generateSecretPhrase(corpus, phraseLength);
   console.log("SECRET: ", secret);
-  secretPhrase = "hello world";//secret.secretPhrase;
-  maskedPhrase = "_____ _____";//secret.maskedPhrase;
+  secretPhrase = secret.secretPhrase;
+  maskedPhrase = secret.maskedPhrase;
 
   // Set the event handler for client guesses
   eventPublisher.on('clientSendMessage', function(message){
