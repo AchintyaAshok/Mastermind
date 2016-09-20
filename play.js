@@ -19,41 +19,41 @@ const DIFFICULTY = {
 var phraseGuesser     = require(path.join(ENGINES_PATH, "phraseGuesser"));
 var letterwiseGuesser = require(path.join(ENGINES_PATH, "letterwiseGuesser"));
 
-var corpus = [ "jello", "am", "golden", "world", "black",
- "green", "hat", "cat", "hello", "champ", "hound",
- "mistake", "fat", "a", "urn", "gnat", "park", "gun",
- "mourn", "chat", "mask", "fun", "cask", "print"
-];
+// var corpus = [ "jello", "am", "golden", "world", "black",
+//  "green", "hat", "cat", "hello", "champ", "hound",
+//  "mistake", "fat", "a", "urn", "gnat", "park", "gun",
+//  "mourn", "chat", "mask", "fun", "cask", "print"
+// ];
+
+var corpus = [ "hello", "world" ];
 
 var guessEngines = [
   "phraseGuesser",
   "letterwiseGuesser"
 ];
 
-phraseGuesser.initGuessEngine(undefined, ["hello", "world"]);
+/* The singleton event publisher that's used to asynchronously communicate between mock client and mock server */
+var eventPublisher = new EventEmitter();
 
-// The singleton event publisher that's used to asynchronously communicate between mock client and mock server
-// var eventPublisher = new EventEmitter();
-//
-// /* Initialize our server and client */
-// eventPublisher.on('initServer', function(){
-//   console.log('Server init()');
-//   mockClient.init(eventPublisher);
-// });
-// eventPublisher.on('initClient', function(){
-//   console.log('Client init()');
-//   phraseGuesser.initGuessEngine(mockClient, corpus);
-// });
-// eventPublisher.on('serverMessage', function(message){
-//   phraseGuesser.handleMessage(message);
-// });
-// eventPublisher.on('serverClose', function(){
-//   console.log("SERVER CLOSED");
-// });
-//
-// // Change this to whatever you please
-// var myDifficulty = DIFFICULTY.easy;
-// var phraseLength = Math.floor(Math.random() * (myDifficulty[1] - myDifficulty[0]) + myDifficulty[0]);
-//
-// // Initialize the server
-// mockServer.init(eventPublisher, corpus, phraseLength); // initialize the server
+/* Initialize our server and client */
+eventPublisher.on('initServer', function(){
+  console.log('Server init()');
+  mockClient.init(eventPublisher);
+});
+eventPublisher.on('initClient', function(){
+  console.log('Client init()');
+  phraseGuesser.initGuessEngine(mockClient, corpus);
+});
+eventPublisher.on('serverMessage', function(message){
+  phraseGuesser.handleMessage(message);
+});
+eventPublisher.on('serverClose', function(){
+  console.log("SERVER CLOSED");
+});
+
+// Change this to whatever you please
+var myDifficulty = DIFFICULTY.easy;
+var phraseLength = Math.floor(Math.random() * (myDifficulty[1] - myDifficulty[0]) + myDifficulty[0]);
+
+// Initialize the server
+mockServer.init(eventPublisher, corpus, phraseLength); // initialize the server

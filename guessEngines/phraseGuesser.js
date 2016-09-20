@@ -156,7 +156,7 @@ function evaluateLastGuess(score){
       // we need to do some cleanup to prepare for the next piece
       pgMembers.queuedOrIgnored = {};
       while(!pgMembers.guessQueue.isEmpty()) pgMembers.guessQueue.deq(); // clear out the guess queue
-      pgMembers.guessQueue.push(getRandomFirstGuess(pgMembers.guessPieceIndex));
+      pgMembers.guessQueue.enq(getRandomFirstGuess(pgMembers.guessPieceIndex));
     }
   }
   else{
@@ -167,7 +167,7 @@ function evaluateLastGuess(score){
       for(var i=0; i<relativeWordAndScore[0].length; ++i){ // all words with 0 matching characters with the last guess
         var word = relativeWordAndScore[0][i];
         if(pgMembers.queuedOrIgnored[word] === undefined){
-          pgMembers.guessQueue.push(word);
+          pgMembers.guessQueue.enq(word);
         }
       }
     }
@@ -178,7 +178,7 @@ function evaluateLastGuess(score){
         for(var j=0; j<wordsToIgnore.length; ++j){
           var word = wordsToIgnore[j];
           if(pgMembers.queuedOrIgnored[word] === undefined){
-            pgMembers.guessQueue.push(word); // ignore this word
+            pgMembers.guessQueue.enq(word); // ignore this word
           }
         }
       }
@@ -188,7 +188,7 @@ function evaluateLastGuess(score){
         for(var j=0; j<wordsToEval.length; ++j){
           var word = wordsToEval[j];
           if(pgMembers.queuedOrIgnored[word] === undefined){
-            pgMembers.guessQueue.push(word);
+            pgMembers.guessQueue.enq(word);
           }
         }
       }
@@ -224,7 +224,7 @@ function handleMessage(response){
       pgMembers.guessPieceLength.push(pieces[i].length); // determine the length of each piece
     }
     // randomly pick a word that fits the length of the first piece
-    pgMembers.guessQueue.push(getRandomFirstGuess(0)); // add this to our queue
+    pgMembers.guessQueue.enq(getRandomFirstGuess(0)); // add this to our queue
   }
   else{
     // evaluate how good the last guess was and prune our choices appropriately
