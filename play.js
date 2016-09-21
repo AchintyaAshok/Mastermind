@@ -22,7 +22,16 @@ var letterwiseGuesser = require(path.join(ENGINES_PATH, "letterwiseGuesser"));
 var corpus = [ "jello", "am", "golden", "world", "black",
  "green", "hat", "cat", "hello", "champ", "hound",
  "mistake", "fat", "a", "urn", "gnat", "park", "gun",
- "mourn", "chat", "mask", "fun", "cask", "print"
+ "mourn", "chat", "mask", "fun", "cask", "print",
+ "prat", "mat", "door", "chore", "gore", "coding",
+ "special", "foot", "shoe", "bar", "fool", "angry",
+ "hungry", "hung", "match", "box", "green", "day",
+ "spleen", "mean", "sky", "why", "can", "pan", "sum",
+ "nun", "done", "smack", "flat", "foot", "that", "the",
+ "sky", "pie", "churn", "fern", "smear", "guess", "press",
+ "mess", "past", "cask", "floor", "oar", "pore", "poor",
+ "ate", "paid", "lent", "spent", "gave", "pray", "ran",
+ "planned", "spoke", "wrote", "swam", "drove",
 ];
 
 // var corpus = [ "hello", "world" ];
@@ -35,9 +44,6 @@ var guessEngines = [
 /* The singleton event publisher that's used to asynchronously communicate between mock client and mock server */
 var eventPublisher = new EventEmitter();
 
-var serverCalls, clientCalls;
-serverCalls = clientCalls = 0;
-
 /* Initialize our server and client */
 eventPublisher.on('initServer', function(){
   console.log('Server init()');
@@ -48,7 +54,6 @@ eventPublisher.on('initClient', function(){
   phraseGuesser.initGuessEngine(mockClient, corpus);
 });
 eventPublisher.on('serverMessage', function(message){
-  ++clientCalls;
   phraseGuesser.handleMessage(message);
 });
 eventPublisher.on('serverClose', function(){
@@ -56,7 +61,7 @@ eventPublisher.on('serverClose', function(){
 });
 
 // Change this to whatever you please
-var myDifficulty = DIFFICULTY.easy;
+var myDifficulty = DIFFICULTY.insane;
 var phraseLength = Math.floor(Math.random() * (myDifficulty[1] - myDifficulty[0]) + myDifficulty[0]);
 
 // Initialize the server

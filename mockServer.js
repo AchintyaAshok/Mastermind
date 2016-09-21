@@ -6,6 +6,7 @@ var common = require("./lib/common");
 // that the client needs to guess to win, and obscured phrase is just the
 // secret phrase with letters masked out with an underscore.
 var eventPublisher, corpus, secretPhrase, maskedPhrase;
+var numGuesses = 0;
 
 // State variables
 const WON     = 1;
@@ -14,8 +15,9 @@ const LOST    = -1;
 
 function evaluateGuess(guess){
   console.log("[S] Evaluating latest guess '" + guess + "'");
+  ++numGuesses;
   if(guess === secretPhrase){
-    console.log('[S] You won.');
+    console.log('[S] You won. # guesses made: ', numGuesses);
     eventPublisher.emit('serverMessage', maskedPhrase + "\n0\n1");
     eventPublisher.emit('serverClose'); // socket gets closed
     return;
