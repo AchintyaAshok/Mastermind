@@ -36,7 +36,8 @@ Instead of having to deal with annoying websocket client/server architecture the
 Specifically, the client listens for messages from the server marked as "serverMessage" and the server listens for messages from the client marked as "clientMessage". The latter is usually a guess string and the former is the response to a guess. I have used the EventEmitter library to architect this asynchronous event-based communication.
 
 ## Screenshots
-### Playing the game on trivial difficulty is easy!
+Playing the game on trivial difficulty is easy!
+![alt text](https://github.com/AchintyaAshok/Mastermind/blob/master/img/easy.png)
 
-
-### Insane is another game altogether. Can you beat this minimum amount of guesses?
+Insane is another game altogether. Can you beat this minimum amount of guesses?
+![alt text](https://github.com/AchintyaAshok/Mastermind/blob/master/img/insane.png)
