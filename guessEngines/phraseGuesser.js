@@ -17,6 +17,7 @@ var pgMembers = {
   queuedOrIgnored:    {},
   guessQueue:         new Queue(), // we will just push everything into here and evaluate it in FIFO fashion
   lastGuess:          "",
+  madeFinalGuess:     false,
 };
 
 /* This function takes the corpus and generates two things.
@@ -95,7 +96,6 @@ function nextGuess(){
   while(true){
     // keep dequeueing until we find the next word
     nextWord = pgMembers.guessQueue.deq();
-    console.log("next..", nextWord);
     if(pgMembers.queuedOrIgnored[nextWord] === undefined) break;
   }
   if(nextWord === undefined){
@@ -103,7 +103,7 @@ function nextGuess(){
   }
   pgMembers.queuedOrIgnored[nextWord] = true; // mark this word as visited
   pgMembers.lastGuess = nextWord; // our new 'last guess'
-  console.log("next word: ", nextWord);
+  console.log("[PG] next word: ", nextWord);
 
   // now place the word in the position we are evaluating
   // ex. next word = "hello" => "hello _____"
@@ -119,7 +119,7 @@ function nextGuess(){
     }
     pre = " ";
   }
-  console.log("next guess: ", guess);
+  console.log("[PG] next guess: ", guess);
   pgMembers.client.send(guess);
 }
 
@@ -139,7 +139,7 @@ function evaluateLastGuess(score){
 
   // Check if we got a correct match
   if(score === pgMembers.guessPieceLength[pgMembers.guessPieceIndex]){
-    console.log("Found a piece: [" + pgMembers.guessPieceIndex + "]: ", pgMembers.lastGuess);
+    console.log("[PG] Found a piece: [" + pgMembers.guessPieceIndex + "]: ", pgMembers.lastGuess);
     // add this to our string array of correct pieces
     pgMembers.guessPieces.push(pgMembers.lastGuess);
     ++pgMembers.guessPieceIndex;
@@ -153,7 +153,8 @@ function evaluateLastGuess(score){
         fullGuess += pgMembers.guessPieces[i];
         pre = " ";
       }
-      console.log("Final guess: ", fullGuess);
+      console.log("[PG] Final guess: ", fullGuess);
+      pgMembers.madeFinalGuess = true;
       pgMembers.client.send(fullGuess);
     }
     else{
@@ -212,11 +213,11 @@ function handleMessage(response){
   console.log("[PG] message details:", details);
 
   if(details.state === 1){ // 1 is the winning state
-    console.log("You won.");
+    console.log("[PG] You won.");
     return;
   }
   else if(details.state === -1){ // you lose :(
-    console.log("You lost.")
+    console.log("[PG] You lost.")
     return;
   }
 
@@ -238,7 +239,9 @@ function handleMessage(response){
     evaluateLastGuess(details.score - pgMembers.numDelimiters); // the last score tells us how many letters were matched
   }
 
-  nextGuess();
+  if(details.state !== 1 && !pgMembers.madeFinalGuess){
+    nextGuess();
+  }
 }
 
 module.exports = {

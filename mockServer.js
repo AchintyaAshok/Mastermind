@@ -6,6 +6,7 @@ var common = require("./lib/common");
 // that the client needs to guess to win, and obscured phrase is just the
 // secret phrase with letters masked out with an underscore.
 var eventPublisher, corpus, secretPhrase, maskedPhrase;
+
 // State variables
 const WON     = 1;
 const IN_PLAY = 0;
@@ -20,7 +21,7 @@ function evaluateGuess(guess){
     return;
   }
   else{
-    console.log("checking score..");
+    console.log("[S] checking score..");
     var score = 0;
     for(var i=0; i<guess.length; ++i){
       if(guess[i] === secretPhrase[i]) ++score

@@ -35,6 +35,9 @@ var guessEngines = [
 /* The singleton event publisher that's used to asynchronously communicate between mock client and mock server */
 var eventPublisher = new EventEmitter();
 
+var serverCalls, clientCalls;
+serverCalls = clientCalls = 0;
+
 /* Initialize our server and client */
 eventPublisher.on('initServer', function(){
   console.log('Server init()');
@@ -45,10 +48,11 @@ eventPublisher.on('initClient', function(){
   phraseGuesser.initGuessEngine(mockClient, corpus);
 });
 eventPublisher.on('serverMessage', function(message){
+  ++clientCalls;
   phraseGuesser.handleMessage(message);
 });
 eventPublisher.on('serverClose', function(){
-  console.log("SERVER CLOSED");
+  console.log("\n\t[ -- SERVER CLOSED -- ]\n");
 });
 
 // Change this to whatever you please
