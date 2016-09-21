@@ -59,7 +59,7 @@ eventPublisher.on('serverClose', function(){
 });
 
 // Change this to whatever you please
-var myDifficulty = DIFFICULTY.easy;
+var myDifficulty = DIFFICULTY.insane;
 var phraseLength = Math.floor(Math.random() * (myDifficulty[1] - myDifficulty[0]) + myDifficulty[0]);
 
 // Initialize the server
