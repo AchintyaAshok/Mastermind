@@ -34,3 +34,9 @@ At the moment, I have defined a single optimized engine, PhraseGuesserEngine. Th
 Instead of having to deal with annoying websocket client/server architecture then having to run the server on a port and have the client connect to that port, I mocked out a simple server/client framework that we use instead. Like the Node websocket library (ws), the client and server have event handlers with specific messages.
 
 Specifically, the client listens for messages from the server marked as "serverMessage" and the server listens for messages from the client marked as "clientMessage". The latter is usually a guess string and the former is the response to a guess. I have used the EventEmitter library to architect this asynchronous event-based communication.
+
+## Screenshots
+### Playing the game on trivial difficulty is easy!
+
+
+### Insane is another game altogether. Can you beat this minimum amount of guesses?
