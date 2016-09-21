@@ -34,8 +34,6 @@ var corpus = [ "jello", "am", "golden", "world", "black",
  "planned", "spoke", "wrote", "swam", "drove",
 ];
 
-// var corpus = [ "hello", "world" ];
-
 var guessEngines = [
   "phraseGuesser",
   "letterwiseGuesser"
@@ -61,7 +59,7 @@ eventPublisher.on('serverClose', function(){
 });
 
 // Change this to whatever you please
-var myDifficulty = DIFFICULTY.insane;
+var myDifficulty = DIFFICULTY.easy;
 var phraseLength = Math.floor(Math.random() * (myDifficulty[1] - myDifficulty[0]) + myDifficulty[0]);
 
 // Initialize the server
