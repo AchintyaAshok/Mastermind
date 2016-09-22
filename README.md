@@ -66,6 +66,22 @@ Now, when you guess a word and get back a response indicating the number of lett
 ### LetterwiseEngine
 This engine will iterate through all 26 letters in the alphabet for each word and determine if the letter in each position is correct. Therefore, the worst case runtime for this engine is 27^n where n is the length of the word.
 
+### Choosing An Engine
+Select the guess engine that you would like to use by changing the following line in play.js:
+```javascript
+var myGuessEngine = "phraseGuesser";
+```
+
+### Defining A New Engine
+As long as your engine implements a initGuessEngine() method and a handleMessage() method, you will be set. initGuessEngine() should accept the websocket client handle and an array of words - the corpus. Your handleMessage() method is responsible for interpreting messages from the servers (responses from guesses) and then using the client handle passed in initGuessEngine() to send guesses.
+
+Then, add your engine's javascript file as a module in factory.js:
+```javascript
+var MyCustomEngine = require(/* Path To My Engine */);
+```
+
+Finally, add a condition under the init() method of the factory to detect when the name of your engine is given as the type and to return the appropriate module.
+
 ### Mocked WebSocket Architecture
 Instead of having to deal with annoying websocket client/server architecture then having to run the server on a port and have the client connect to that port, I mocked out a simple server/client framework that we use instead. Like the Node websocket library (ws), the client and server have event handlers with specific messages.
 
