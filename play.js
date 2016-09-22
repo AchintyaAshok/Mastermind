@@ -7,6 +7,8 @@ var mockClient    = require('./mockClient');
 var common        = require('./lib/common');
 
 const ENGINES_PATH = path.join(__dirname, "guessEngines");
+var GuessEngineFactory = require(path.join(ENGINES_PATH, "factory"));
+
 // Different levels of difficulty we can play. "Difficulty" is determined by the length of the secret phrase
 const DIFFICULTY = {
   trivial:    [3, 5], // the length of the secret phrase generated
@@ -15,9 +17,6 @@ const DIFFICULTY = {
   difficult:  [16, 20],
   insane:     [21, 30]
 };
-
-var phraseGuesser     = require(path.join(ENGINES_PATH, "phraseGuesser"));
-var letterwiseGuesser = require(path.join(ENGINES_PATH, "letterwiseGuesser"));
 
 var corpus = [ "jello", "am", "golden", "world", "black",
  "green", "hat", "cat", "hello", "champ", "hound",
@@ -34,10 +33,9 @@ var corpus = [ "jello", "am", "golden", "world", "black",
  "planned", "spoke", "wrote", "swam", "drove",
 ];
 
-var guessEngines = [
-  "phraseGuesser",
-  "letterwiseGuesser"
-];
+// Choose your guess engine
+var myGuessEngine = "phraseGuesser";
+GuessEngine = GuessEngineFactory.init(myGuessEngine);
 
 /* The singleton event publisher that's used to asynchronously communicate between mock client and mock server */
 var eventPublisher = new EventEmitter();
@@ -49,10 +47,10 @@ eventPublisher.on('initServer', function(){
 });
 eventPublisher.on('initClient', function(){
   console.log('Client init()');
-  phraseGuesser.initGuessEngine(mockClient, corpus);
+  GuessEngine.initGuessEngine(mockClient, corpus);
 });
 eventPublisher.on('serverMessage', function(message){
-  phraseGuesser.handleMessage(message);
+  GuessEngine.handleMessage(message);
 });
 eventPublisher.on('serverClose', function(){
   console.log("\n\t[ -- SERVER CLOSED -- ]\n");
