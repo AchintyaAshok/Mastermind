@@ -35,7 +35,7 @@ var corpus = [ "jello", "am", "golden", "world", "black",
 
 // Choose your guess engine
 var myGuessEngine = "phraseGuesser";
-GuessEngine = GuessEngineFactory.init(myGuessEngine);
+var GuessEngine = GuessEngineFactory.init(myGuessEngine);
 
 /* The singleton event publisher that's used to asynchronously communicate between mock client and mock server */
 var eventPublisher = new EventEmitter();
